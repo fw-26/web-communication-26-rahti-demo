@@ -14,27 +14,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+my_name = "Fredde"
+
 # Main route for this API
 @app.get("/")
 def read_root(): 
     # f-string concatenation
-    return { "msg": f"Hotel API!" }
+    return { "msg": f"Hello {my_name}"}
 
-# List all rooms 
-@app.get("/rooms")
-def get_rooms(): 
-    rooms = [
-        { "room_number": 101, "room_type": "single room", "price": 80 },
-        { "room_number": 202, "room_type": "double room", "price": 120 },
-        { "room_number": 404, "room_type": "suite", "price": 500 }
-    ]
-    return rooms
+# What is my ip 
+@app.get("/api/ip")
+def api_ip(request: Request): 
+    # f-string concatenation
+    return { "ip": request.client.host }
 
-# Create booking
-@app.post("/bookings")
-def create_booking():
-    return { "msg": "Booking created!"}
-
+'''
+@app.get("/ip", response_class=HTMLResponse)
+def html_ip(request: Request):
+    return f"<h1>Your IP is {request.client.host}</h1>"
+'''
 
 
 
