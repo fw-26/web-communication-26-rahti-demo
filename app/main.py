@@ -22,9 +22,8 @@ create_schema()
 class Booking(BaseModel):
     guest_id: int
     room_id: int
-
-    #datefrom: date
-    #dateto: date
+    datefrom: date
+    dateto: date
 
 # Main route for this API
 @app.get("/")
@@ -59,19 +58,43 @@ def get_rooms():
         rooms = cur.fetchall()
     return rooms
 
+# Get one room
+@app.get("/rooms/{id}")
+def get_one_room(id: int): 
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute("""
+            SELECT * 
+            FROM rooms 
+            WHERE id = %s
+        """, (id,)) # <- tuple, list is also fine: [id]
+        room = cur.fetchone()
+    return room
+
 # Create booking
 @app.post("/bookings")
 def create_booking(booking: Booking):
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute("""
             INSERT INTO bookings (
-                
+                room_id, 
+                guest_id,
+                datefrom,
+                dateto
             ) VALUES (
-            
-            )
-        """)
+                %s, %s, %s, %s
+            ) RETURNING id
+        """, [
+            booking.room_id, 
+            booking.guest_id,
+            booking.datefrom,
+            booking.dateto
+        ])
+        new_booking = cur.fetchone()
         
-    return { "msg": booking}
+    return { 
+        "msg": "Booking created!", 
+        "id": new_booking['id']
+    }
 
 
 
