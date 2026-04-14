@@ -9,6 +9,9 @@ GET {{apiUrl}}/rooms
 GET {{apiUrl}}/rooms/2
 
 
+### List bookings
+GET {{apiUrl}}/bookings
+
 ### Create booking
 POST {{apiUrl}}/bookings
 Content-Type: application/json

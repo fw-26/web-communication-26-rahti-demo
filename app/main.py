@@ -19,6 +19,7 @@ app.add_middleware(
 
 create_schema()
 
+# Data model for bookings
 class Booking(BaseModel):
     guest_id: int
     room_id: int
@@ -70,6 +71,16 @@ def get_one_room(id: int):
         room = cur.fetchone()
     return room
 
+# List all bookings 
+@app.get("/bookings")
+def get_bookings(): 
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute("""
+           SELECT * FROM bookings         
+        """)
+        b = cur.fetchall()
+    return b
+
 # Create booking
 @app.post("/bookings")
 def create_booking(booking: Booking):
@@ -82,7 +93,7 @@ def create_booking(booking: Booking):
                 dateto
             ) VALUES (
                 %s, %s, %s, %s
-            ) RETURNING id
+            ) RETURNING *
         """, [
             booking.room_id, 
             booking.guest_id,
@@ -93,7 +104,8 @@ def create_booking(booking: Booking):
         
     return { 
         "msg": "Booking created!", 
-        "id": new_booking['id']
+        "id": new_booking['id'],
+        "room_id": new_booking['room_id']
     }
 
 
