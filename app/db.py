@@ -9,6 +9,9 @@ def create_schema():
     with get_conn() as conn, conn.cursor() as cur:
         # Create the schema
         cur.execute("""
+            ----------
+            -- ROOMS
+            ----------
             CREATE TABLE IF NOT EXISTS rooms (
                 id SERIAL PRIMARY KEY,
                 room_number INT NOT NULL,
@@ -17,5 +20,31 @@ def create_schema():
                     
             -- add columns
             ALTER TABLE rooms ADD COLUMN IF NOT EXISTS room_type VARCHAR;
+            ALTER TABLE rooms ADD COLUMN IF NOT EXISTS price NUMERIC NOT NULL DEFAULT 0;
+
+            ----------
+            -- Guests
+            ----------
+            CREATE TABLE IF NOT EXISTS guests (
+                id SERIAL PRIMARY KEY,
+                firstname VARCHAR NOT NULL,
+                lastname VARCHAR NOT NULL,
+                address VARCHAR,
+                created_at TIMESTAMP DEFAULT now()
+            );
+
+            ----------
+            -- Bookings
+            ----------
+            CREATE TABLE IF NOT EXISTS bookings (
+                id SERIAL PRIMARY KEY,
+                guest_id INT REFERENCES guests(id),
+                room_id INT REFERENCES rooms(id),
+                datefrom DATE NOT NULL DEFAULT now(),
+                dateto DATE NOT NULL DEFAULT now(),
+                info VARCHAR,
+                created_at TIMESTAMP DEFAULT now()
+            );
+
 
         """)

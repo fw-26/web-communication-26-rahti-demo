@@ -2,7 +2,7 @@
 services:
   postgres:
     image: postgres:17
-    container_name: postgres-fastapi
+    container_name: postgres-fastapi-en
     environment:
       POSTGRES_DB: devdb
       POSTGRES_USER: devuser

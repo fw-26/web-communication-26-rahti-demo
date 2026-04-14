@@ -26,14 +26,28 @@ def read_root():
 
     return { "msg": f"Hotel API!", "db_status": result }
 
+# if-statements
+@app.get("/if/{term}")
+def if_test(term: str):
+    msg = "Default msg"
+
+    if (term == "hello" 
+        or term == "hi"):
+        msg = "Hello yourself!"
+    elif (term == "hej" or term == "moi") and 1 == 0:
+        msg = "Hej på dig!" 
+    else:
+        msg = f"I don't understand {term}"
+
+    return { "msg": msg}
+
+
 # List all rooms 
 @app.get("/rooms")
 def get_rooms(): 
-    rooms = [
-        { "room_number": 101, "room_type": "single room", "price": 80 },
-        { "room_number": 202, "room_type": "double room", "price": 120 },
-        { "room_number": 404, "room_type": "suite", "price": 500 }
-    ]
+    with get_conn() as conn, conn.cursor() as cur:
+        cur.execute("SELECT * FROM rooms")
+        rooms = cur.fetchall()
     return rooms
 
 # Create booking
