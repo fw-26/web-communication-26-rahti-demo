@@ -25,6 +25,7 @@ class Booking(BaseModel):
     room_id: int
     datefrom: date
     dateto: date
+    info: str
 
 # Main route for this API
 @app.get("/")
@@ -90,15 +91,17 @@ def create_booking(booking: Booking):
                 room_id, 
                 guest_id,
                 datefrom,
-                dateto
+                dateto,
+                info
             ) VALUES (
-                %s, %s, %s, %s
+                %s, %s, %s, %s, %s
             ) RETURNING *
         """, [
             booking.room_id, 
             booking.guest_id,
             booking.datefrom,
-            booking.dateto
+            booking.dateto,
+            booking.info
         ])
         new_booking = cur.fetchone()
         

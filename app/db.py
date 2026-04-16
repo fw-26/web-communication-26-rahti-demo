@@ -41,10 +41,12 @@ def create_schema():
                 guest_id INT REFERENCES guests(id),
                 room_id INT REFERENCES rooms(id),
                 datefrom DATE NOT NULL DEFAULT now(),
-                dateto DATE NOT NULL DEFAULT now(),
+                dateto DATE NOT NULL DEFAULT now()+1,
                 info VARCHAR,
                 created_at TIMESTAMP DEFAULT now()
             );
+                    
+            ALTER TABLE bookings ALTER COLUMN dateto SET DEFAULT now()::date+1
 
 
         """)
