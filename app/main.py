@@ -37,7 +37,7 @@ def validate_key(api_key: str = Depends(api_key_header)):
 
 # Data model for bookings
 class Booking(BaseModel):
-    guest_id: int
+    #guest_id: int # this will come from the API Key
     room_id: int
     datefrom: date
     dateto: date
@@ -114,14 +114,15 @@ def get_bookings(guest: dict = Depends(validate_key)):
                 ON r.id = b.room_id
             INNER JOIN guests g
                 ON g.id = b.guest_id
+            WHERE b.guest_id = %s
             ORDER BY b.id DESC        
-        """)
+        """, [guest['id']])
         b = cur.fetchall()
     return b
 
 # Create booking
 @app.post("/bookings")
-def create_booking(booking: Booking):
+def create_booking(booking: Booking, guest: dict = Depends(validate_key)):
     with get_conn() as conn, conn.cursor() as cur:
         cur.execute("""
             INSERT INTO bookings (
@@ -135,7 +136,7 @@ def create_booking(booking: Booking):
             ) RETURNING *
         """, [
             booking.room_id, 
-            booking.guest_id,
+            guest['id'],
             booking.datefrom,
             booking.dateto,
             booking.info
